@@ -1,5 +1,5 @@
 # {{ ansible }}
 
 Playbooks created:
-- disk_setup.yml
-
+- lv/disk_setup.yml
+- satellite_installer/firewall_ports.yml
