@@ -1,0 +1,26 @@
+---
+- name: Create lv
+  hosts: any
+  vars:
+    disk: /dev/DISKNAME
+    satellitevg: SATELLITEVG
+    pglv: PGLVNAME
+    pulplv: PULPLVNAME
+  tasks:
+    - name: Create or resize a volume group on top of /dev/sdb1 and /dev/sdc5.
+      community.general.lvg:
+        vg: "{{ satellite }}"
+        pvs: "{{ DISK }}"
+    
+    - name: Create a logical volume for {{ pglv }}
+      community.general.lvol:
+        vg: "{{ satellitevg }}"
+        lv: "{{ pglv }}"
+        size: 20g
+
+    - name: Create a logical volume for {{ pulplv }}.
+      community.general.lvol:
+        vg: "{{ satellitevg }}"
+        lv: "{{ pulplv }}"
+        size: 300g
+
