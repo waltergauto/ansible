@@ -1,5 +1,4 @@
-# ansible
-Ansible Playbooks
+# {{ ansible }}
 
 Playbooks created:
 - disk_setup.yml

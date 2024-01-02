@@ -1,0 +1,31 @@
+---
+- name: Configure firewall ports
+  hosts: localhost
+  vars:
+    tcp_ports:
+      - 80
+      - 443
+      - 5647
+      - 8000
+      - 8140
+      - 9090
+      - 53
+    udp_ports:
+      - 67
+      - 69
+  tasks:
+    - name: Configure TCP ports
+      ansible.posix.firewalld:
+        permanent: true
+        immediate: true
+        port: "{{ item }}/tcp"
+        state: enabled
+      loop: "{{ tcp_ports }}"
+    
+    - name: Configure UDP ports
+      ansible.posix.firewalld:
+        permanent: true
+        immediate: true
+        port: "{{ item }}/udp"
+        state: enabled
+      loop: "{{ udp_ports }}"
