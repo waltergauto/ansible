@@ -6,21 +6,62 @@
     satellitevg: SATELLITEVG
     pglv: PGLVNAME
     pulplv: PULPLVNAME
+    swaplv: SWAPLVNAME
+    pgpath: /var/opt/rh/rh/postgresql12/lib/pgsql
+    pulppath: /var/lib/pulb
   tasks:
-    - name: Create or resize a volume group on top of /dev/sdb1 and /dev/sdc5.
+    - name: Create volume group {{ satellitevg }}.
       community.general.lvg:
-        vg: "{{ satellite }}"
+        vg: "{{ satellitevg }}"
         pvs: "{{ DISK }}"
     
-    - name: Create a logical volume for {{ pglv }}
+    - name: Create logical volume for {{ pglv }}.
       community.general.lvol:
         vg: "{{ satellitevg }}"
         lv: "{{ pglv }}"
         size: 20g
 
+    - name: Create {{ pgpath }} directory
+      ansible.builtin.file:
+        state: directory
+        path: '{{ pgpath }}'
+    
+    - name: Format  {{ pglv }}
+      community.general.filesystem:
+        fstype: xfs
+        dev: "{{ pgpath }}"
+
+    - name: Create {{ puplpath }} directory
+      ansible.builtin.file:
+        state: directory
+        path: "{{ pulppath }}"
+      
     - name: Create a logical volume for {{ pulplv }}.
       community.general.lvol:
         vg: "{{ satellitevg }}"
         lv: "{{ pulplv }}"
         size: 300g
 
+    - name: Format pulplv
+      community.general.filesystem:
+        fstype: xfs
+        dev: "{{ pulppath }}"
+    
+    - name: Create swap space.
+      community.general.lvg:
+        vg: "{{ satellitevg }}"
+        lv: "{{ swaplv }}"
+        size: 4g
+
+    - name: Format {{ swapfile }}
+      community.general.filesystem:
+        fstype: swap
+        dev: /dev/mapper/{{ satellitevg }}/{{ swaplv }}
+    
+    - name: Add devices to /etc/fstab
+      ansible.builtin.blockinfile:
+       path: /etc/fstab
+       block: |
+        /dev/mapper/{{ satellitevg }}/{{ pglv }}  {{ pgpath }}     xfs default 0 0
+        /dev/mapper/{{ satellitevg }}/{{ pulplv }}  {{ pulppath }} xfs default 0 0
+        /dev/mapper/{{ satellitevg }}/{{ swaplv }}  none           swap  default 0 0
