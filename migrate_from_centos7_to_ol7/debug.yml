@@ -1,0 +1,8 @@
+---
+- name: Print
+  hosts: all
+  tasks:
+    - name: Debug
+      ansible.builtin.debug:
+        var: ansible_facts
+

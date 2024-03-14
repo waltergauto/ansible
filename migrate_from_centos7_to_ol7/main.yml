@@ -1,0 +1,47 @@
+---
+- name: Migrate from Centos 7 to Oracle Linux 7
+  hosts: test
+  tasks:
+    - name: Print Message
+      ansible.builtin.debug:
+        msg: "Migrationg {{ inventory_hostname }} from {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }} to Oracle Linux 7, with IP Address {{ ansible_facts['default_ipv4']['address'] }}"
+    
+    - name: Set Proxy {{ ansible_hostname }}
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: "{{ item }}"
+      loop:
+        - https_proxy="proxy1"
+        - http_proxy="proxy2"
+
+    - name: Copy script
+      ansible.builtin.copy:
+        src: files/centos2ol.sh
+        dest: /tmp
+        owner: root
+        group: root
+        mode: "0750"
+
+    - name: Exclude some packages
+      ansible.builtin.lineinfile:
+        path: /etc/yum.conf
+        line: "exclude=nginx* java* redis* ImageMagick* Geo* mysql ruby* docker*"
+    - name: Get repos enabled
+      ansible.builtin.command:
+        cmd: yum repolist -q
+      register: repos_enabled
+
+    - name: Disable All Repos
+      ansible.builtin.command:
+        cmd: yum-config-manager --disable "*"
+       
+    - name: Enable Only CentOS Repos
+      ansible.builtin.command:
+        cmd: yum-config-manager --enable base updates extras
+
+#    - name: Run script
+#      ansible.builtin.command:
+#        cmd: /tmp/centos2ol.sh
+    - name: Enable all repos
+      ansible.builtin.command:
+        cmd: yum-config-manager --enable "*"
