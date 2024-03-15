@@ -26,11 +26,7 @@
       ansible.builtin.lineinfile:
         path: /etc/yum.conf
         line: "exclude=nginx* java* redis* ImageMagick* Geo* mysql ruby* docker*"
-    - name: Get repos enabled
-      ansible.builtin.command:
-        cmd: yum repolist -q
-      register: repos_enabled
-
+        
     - name: Disable All Repos
       ansible.builtin.command:
         cmd: yum-config-manager --disable "*"
@@ -39,9 +35,10 @@
       ansible.builtin.command:
         cmd: yum-config-manager --enable base updates extras
 
-#    - name: Run script
-#      ansible.builtin.command:
-#        cmd: /tmp/centos2ol.sh
+    - name: Run script
+      ansible.builtin.command:
+        cmd: /tmp/centos2ol.sh
+
     - name: Enable all repos
       ansible.builtin.command:
         cmd: yum-config-manager --enable "*"
