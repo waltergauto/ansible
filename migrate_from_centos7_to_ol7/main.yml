@@ -11,13 +11,13 @@
       ansible.builtin.debug:
         msg: "Migrating {{ inventory_hostname }} from {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }} to Oracle Linux 7 with IP Address {{ ansible_facts['default_ipv4']['address'] }}"
     
-#    - name: Set Proxy {{ ansible_hostname }}
-#      ansible.builtin.lineinfile:
-#        path: /etc/environment
-#        line: "{{ item }}"
-#      loop:
-#        - https_proxy="proxy1"
-#        - http_proxy="proxy2"
+    - name: Set Proxy {{ ansible_hostname }}
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: "{{ item }}"
+      loop:
+        - https_proxy="proxy1"
+        - http_proxy="proxy2"
 
     - name: Copy script
       ansible.builtin.copy:
