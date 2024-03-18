@@ -4,8 +4,8 @@
   vars:
     ol7_repos:
       - ol7_UEKR6
-      - l7_latest
-      - l7_optional_latest
+      - ol7_latest
+      - ol7_optional_latest
   tasks:
     - name: Print Message
       ansible.builtin.debug:
@@ -44,9 +44,13 @@
       ansible.builtin.command:
         cmd: /tmp/centos2ol.sh
 
-    - name: Enable all repos
+    - name: Enable OL7 repos
       ansible.builtin.command:
-        cmd: yum-config-manager --enable "*"
+        cmd: yum-config-manager --enable {{ item }}
+      loop:
+        - ol7_UEKR6
+        - ol7_latest
+        - ol7_optional_latest
 
     - name: Rebooting {{ inventory_hostname }}
       ansible.builtin.reboot:
