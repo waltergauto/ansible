@@ -1,18 +1,23 @@
 ---
 - name: Migrate from Centos 7 to Oracle Linux 7
-  hosts: test
+  hosts: all
+  vars:
+    ol7_repos:
+      - ol7_UEKR6
+      - l7_latest
+      - l7_optional_latest
   tasks:
     - name: Print Message
       ansible.builtin.debug:
         msg: "Migrating {{ inventory_hostname }} from {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }} to Oracle Linux 7 with IP Address {{ ansible_facts['default_ipv4']['address'] }}"
     
-    - name: Set Proxy {{ ansible_hostname }}
-      ansible.builtin.lineinfile:
-        path: /etc/environment
-        line: "{{ item }}"
-      loop:
-        - https_proxy="proxy1"
-        - http_proxy="proxy2"
+#    - name: Set Proxy {{ ansible_hostname }}
+#      ansible.builtin.lineinfile:
+#        path: /etc/environment
+#        line: "{{ item }}"
+#      loop:
+#        - https_proxy="proxy1"
+#        - http_proxy="proxy2"
 
     - name: Copy script
       ansible.builtin.copy:
@@ -46,3 +51,8 @@
     - name: Rebooting {{ inventory_hostname }}
       ansible.builtin.reboot:
         msg: "This machine will be rebooted because of Migrating purposes."
+    
+    - name: Update OS
+      ansible.builtin.yum:
+        name: "*"
+        state: latest
