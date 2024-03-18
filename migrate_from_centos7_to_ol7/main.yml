@@ -4,7 +4,7 @@
   tasks:
     - name: Print Message
       ansible.builtin.debug:
-        msg: "Migrationg {{ inventory_hostname }} from {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }} to Oracle Linux 7, with IP Address {{ ansible_facts['default_ipv4']['address'] }}"
+        msg: "Migrating {{ inventory_hostname }} from {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }} to Oracle Linux 7 with IP Address {{ ansible_facts['default_ipv4']['address'] }}"
     
     - name: Set Proxy {{ ansible_hostname }}
       ansible.builtin.lineinfile:
@@ -43,6 +43,6 @@
       ansible.builtin.command:
         cmd: yum-config-manager --enable "*"
 
-    - name: Reboot {{ inventory_hostname }}
+    - name: Rebooting {{ inventory_hostname }}
       ansible.builtin.reboot:
         msg: "This machine will be rebooted because of Migrating purposes."
