@@ -42,3 +42,7 @@
     - name: Enable all repos
       ansible.builtin.command:
         cmd: yum-config-manager --enable "*"
+
+    - name: Reboot {{ inventory_hostname }}
+      ansible.builtin.reboot:
+        msg: "This machine will be rebooted because of Migrating purposes."
