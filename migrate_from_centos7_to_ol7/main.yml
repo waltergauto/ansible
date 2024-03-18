@@ -35,7 +35,7 @@
       ansible.builtin.command:
         cmd: yum-config-manager --enable base updates extras
 
-    - name: Run script
+    - name: Run migrator script
       ansible.builtin.command:
         cmd: /tmp/centos2ol.sh
 
