@@ -1,0 +1,59 @@
+---
+- name: Playbook for hardening
+  hosts: all
+  gather_facts: true
+  become: true
+  vars:
+    crypto_policies_policy: DEFAULT:NO-SHA1
+  roles:
+    #First install package rhel-system-roles
+    - redhat.rhel_system_roles.crypto_policies
+  tasks:
+    - name: Show reboot is needed
+      debug:
+        msg: "Reboot is needed to apply changes"
+      when: crypto_policies_reboot_required | d(false)
+    - name: Delete KexAlgorithms in ssh_conf
+      lineinfile:
+        path: /etc/ssh/ssh_config
+        regex:  '^KexAlgorithms'
+        state: absent
+    - name: Delete kexalgorithms in sshd_conf
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regex: '^kexalgorithms'
+        state: absent
+#    - name: Update all packages
+#      yum:
+#        name: '*'
+#        state: latest
+#      tags:
+#        - update
+    - name: Change file sysctl.conf
+      sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: yes
+      loop:
+        - { name: 'net.ipv4.conf.all.accept_redirects', value: '0' }
+        - { name: 'net.ipv4.conf.default.accept_redirects', value: '0' }
+        - { name: 'net.ipv4.conf.all.secure_redirects', value: '0' }
+        - { name: 'net.ipv4.conf.default.secure_redirects', value: '0' }
+        - { name: 'net.ipv4.conf.all.send_redirects', value: '0' }
+        - { name: 'net.ipv4.conf.default.send_redirects', value: '0' }
+        # If not correct connection name, change it or make it dynamic
+        - { name: 'net.ipv4.conf.ens192.send_redirects', value: '0' }
+    - name: Set umask to 0077
+      lineinfile:
+        path: "{{ item.path }}"
+        state: present
+        backrefs: true
+        regexp: '^(\s*)UMASK(\s+)\d+'
+        line: '\1UMASK           0077'
+      loop:
+        - {path: '/etc/login.defs'}
+    - name: Create the umask.sh file
+      copy:
+        content: 'umask 0077'
+        dest: /etc/profile.d/umask.sh
