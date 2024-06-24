@@ -1,0 +1,13 @@
+- name: Testing Red Hat connection
+  hosts: all
+  tasks:
+    - name: Red Hat Subscription
+      ansible.builtin.uri:
+        url: "https://{{ item }}"
+        follow_redirects: all
+        validate_certs: false
+        status_code: 200, 403, 404
+      loop:
+        - subscription.rhsm.redhat.com
+        - cdn.redhat.com
+        
