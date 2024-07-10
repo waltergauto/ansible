@@ -1,0 +1,29 @@
+---
+CANAME: example
+
+directory:
+  server:
+    - private
+    - certs
+    - newcerts
+    - crl
+    - csr
+  root-ca:
+    - private
+    - certs
+    - newcerts
+    - crl
+    - csr
+  sub-ca:
+    - private
+    - certs
+    - newcerts
+    - crl
+    - csr
+  server-ca:
+    - private
+    - certs
+    - newcerts
+    - crl
+    - csr
+

@@ -1,0 +1,36 @@
+---
+- name: Create my own CA
+  hosts:
+  tasks:
+    - name: Create directory structure under ca
+      ansible.builtin.file:
+        path: "/tmp/ca/{{ item }}"
+        state: directory
+      loop:
+    
+    - name: Create directory structure under ca
+      ansible.builtin.file:
+        path: "/tmp/server/{{ item }}"
+        state: directory
+
+    - name: Create a key and crt for CA 
+      ansible.builtin.command:
+        cmd: openssl req -new --newkey rsa:2048 -days 365 -nodes -x509 -keyout {{ CANAME }}.key -out {{ CNAME }}.crt -subj 'CN={{ domain }}'
+
+    - name: Create certificate of the CA
+      ansible.builtin.command:
+        cmd: openssl req -x509 -new -nodes -key {{ CANAME }}.key -sha256 -days 1826 -out {{ CANAME }}.crt
+
+    - name: Add the CA certificate to the trusted root certificates
+      ansible.builtin.copy:
+        src: "{{ dir_out }}/{{ CANAME }}.crt"
+        dest: /etc/pki/ca-trust/source/anchors/{{ CANAME }}.crt
+
+    - name: Update ca-trust
+      ansible.builtin.command:
+        cmd: update-ca-trust
+    
+    - name: 
+
+
+
