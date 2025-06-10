@@ -1,0 +1,30 @@
+---
+# tasks file for filebeat
+- name: Copy {{ filebeat_installer }} to {{ inventory_hostname }}
+  ansible.builtin.copy:
+    src: files/{{ filebeat_installer }}
+    dest: /tmp/{{ filebeat_installer }}
+    
+- name: Copy {{ gpg_key }} to {{ inventory_hostname }}
+  ansible.builtin.copy:
+    src: files/{{ gpg_key }}
+    dest: /tmp/{{ gpg_key }}
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Import a key from a file
+  ansible.builtin.rpm_key:
+    state: present
+    key: /tmp/{{ gpg_key }}
+
+- name: Install filebeat from rpm source
+  ansible.builtin.dnf:
+    name: /tmp/{{ filebeat_installer }}
+    state: present
+
+- name: Start and enable filebeat
+  ansible.builtin.service:
+    name: filebeat
+    state: started
+    enabled: true
