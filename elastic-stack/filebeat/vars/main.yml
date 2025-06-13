@@ -1,4 +1,0 @@
----
-# vars file for filebeat
-filebeat_installer: filebeat-9.0.1-x86_64.rpm
-gpg_key: GPG-KEY-elasticsearch
