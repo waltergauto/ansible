@@ -1,0 +1,10 @@
+logstash_host: "logstash"
+environment: "developer"
+platform: "tomcat"
+log_paths:
+  - "/usr/share/tomcat/logs/*.log"
+
+elasticsearch_nodes:
+  - "elasticsearch-1"
+  - "elasticsearch-2"
+  - "elasticsearch-3"
