@@ -1,0 +1,16 @@
+---
+# tasks file for filebeat/config
+- name: Configure filebeat.yaml
+  ansible.builtin.template:
+    src: templates/filebeat.yml.j2
+    dest: /etc/filebeat/filebeat.yml
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart filebeat
+
+- name: Configure firewalld
+  ansible.posix.firewalld:
+    port: 5044/tcp
+    permanent: true
+    state: enabled
