@@ -1,0 +1,12 @@
+---
+- name: Install filebeat
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: Call filebeat/install role
+      ansible.builtin.include_role:
+        name: roles/filebeat/install
+    
+    - name: Call filebeat/config role
+      ansible.builtin.include_role:
+        name: roles/filebeat/config
